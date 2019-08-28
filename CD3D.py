@@ -186,22 +186,4 @@ class CD3D :
         self.conflict = conflict
         
         return conflict
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        
