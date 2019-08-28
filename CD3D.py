@@ -89,8 +89,8 @@ class CD3D :
 
     
     # Check if aircraft are in violation at time 0
-    def violation ( sx, sy, sz ) :
-        return sx**2 + sy**2 < D**2 and sz**2 < H**2
+    def violation ( self, sx, sy, sz ) :
+        return sx**2 + sy**2 < self.D**2 and sz**2 < self.H**2
 
     
     # cd3d: Conflict detection with conflict interval
@@ -186,4 +186,3 @@ class CD3D :
         self.conflict = conflict
         
         return conflict
-        
