@@ -12,18 +12,25 @@
 import math
 from Constants import *
 
+
 # square
 def sq( x ) :
     return x*x
 
-# # min
-# def min( a, b ) :
-#     return a if a < b else b
+
+# square root
+def sqrt( x ) :
+    return math.sqrt( x )
 
 
-# # max 
-# def max( a, b ) :
-#     return a if a > b else b
+# min
+def min( a, b ) :
+    return a if a < b else b
+
+
+# max 
+def max( a, b ) :
+    return a if a > b else b
 
 
 # Asin safe
