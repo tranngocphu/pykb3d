@@ -44,7 +44,7 @@ def dc_dist( lat1, lon1, lat2, lon2 ) :
 
 # Initial true course [rad]
 def true_course( lat1, lon1, lat2, lon2 ) :
-    return atan2_safe( sin(lon2-lon1)*cos(lat2) ,  cos(lat1)*sin(lat2) - sin(lat1)*cos(lat2) * cos(lon1-lon2) )
+    return atan2_safe( sin(lon2-lon1)*cos(lat2), cos(lat1)*sin(lat2) - sin(lat1)*cos(lat2) * cos(lon1-lon2) )
 
 
 class Geosedic : 
