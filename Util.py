@@ -58,10 +58,10 @@ def discr( a, b, c ) :
 # Quadratic equation
 def root( a, b, c, eps ) :
     if a == 0 :
-        return NAR # this case should never happen
+        return NaR # this case should never happen
     d = discr( a, b, c )
     if ( d < 0 ) :
-        return NAR # this case should never happen
+        return NaR # this case should never happen
     return ( -b + eps * math.sqrt( d ) / (2*a) )
 
 
