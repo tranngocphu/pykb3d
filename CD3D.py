@@ -34,9 +34,7 @@
 # 
 
 
-import numpy as np
 import math
-
 
 
 class CD3D :
@@ -90,7 +88,7 @@ class CD3D :
     
     # Check if aircraft are in violation at time 0
     def violation ( self, sx, sy, sz ) :
-        return sx**2 + sy**2 < self.D**2 and sz**2 < self.H**2
+        return sq(sx) + sq(sy) < sq(self.D) and sq(sz) < sq(self.H)
 
     
     # cd3d: Conflict detection with conflict interval
@@ -123,17 +121,17 @@ class CD3D :
         self.t_in = 0
         self.t_out = 0
 
-        if vx == 0 and vy == 0 and vx**2 + vy**2 < self.D**2 :
+        if vx == 0 and vy == 0 and sq(vx) + sq(vy) < sq(self.D) :
             # There's no horizontal movement
             
-            conflict = sz**2 < self.H**2 or ( vz != 0 and vz*sz <= 0 and -self.H < np.sign(vz)*(self.T*vz + sz) )
+            conflict = sq(sz) < sq(self.H) or ( vz != 0 and vz*sz <= 0 and -self.H < sign(vz)*(self.T*vz + sz) )
 
             if conflict :
                 
                 if vz != 0 :
                     
-                    self.t_in     = (  np.sign(sz)*self.H - sz ) / vz 
-                    self.t_out    = ( -np.sign(sz)*self.H - sz ) / vz 
+                    self.t_in     = (  sign(sz)*self.H - sz ) / vz 
+                    self.t_out    = ( -sign(sz)*self.H - sz ) / vz 
                     time2lvs = t_in
                 
                 else :
@@ -144,11 +142,11 @@ class CD3D :
         else :
             # vertical conflict in the future
             
-            d = 2 * sx * vx * sy * vy + D**2 * ( vx**2 + vy**2 ) - ( sx**2 * vy**2 + sy**2 * vx**2 )
+            d = 2 * sx * vx * sy * vy + sq(D) * ( sq(vx) + sq(vy) ) - ( sq(sx) * sq(vy) + sq(sy) * sq(vx) )
 
             if d > 0 :
 
-                a = vx**2 + vy**2
+                a = sq(vx) + sq(vy)
                 b = sx*vx + sy*vy
                 theta1 = ( -b - math.sqrt(d) ) / a # first intersection with D
                 theta2 = ( -b + math.sqrt(d) ) / a # second intersection with D
@@ -161,13 +159,13 @@ class CD3D :
                     # horizontal movement only
                     self.t_in  = theta1
                     self.t_out = theta2
-                    conflict = sz**2 < self.H**2
+                    conflict = sq(sz) < sq(self.H)
 
                 else :
                     
                     # general case
-                    t1 = ( -np.sign(vz)*self.H - sz ) / vz
-                    t2 = (  np.sign(vz)*self.H - sz ) / vz
+                    t1 = ( -sign(vz)*self.H - sz ) / vz
+                    t2 = (  sign(vz)*self.H - sz ) / vz
                     time2lvs = t1
 
                     # t1 < t2
