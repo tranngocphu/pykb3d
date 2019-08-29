@@ -34,3 +34,64 @@
 # The below Python implementation was done by Phu Tran @ ATMRI
 #
 
+
+from Constants import Flat, WGS84
+
+# Great cricle distance [rad]
+def dc_dist( lat1, lon1, lat2, lon2 ) :
+    return 2 * asin_safe( sqrt_safe( sq( sin( (lat1-lat2) / 2.0 ) ) + cos(lat1)*cos(lat2)*sq( sin( (lon1-lon2) / 2.0  ) ) ) )
+
+
+# Initial true course [rad]
+def true_course( lat1, lon1, lat2, lon2 ) :
+    return atan2_safe( sin(lon2-lon1)*cos(lat2) ,  cos(lat1)*sin(lat2) - sin(lat1)*cos(lat2) * cos(lon1-lon2) )
+
+
+class Geosedic : 
+
+    def __init__ () :
+
+        self.sx = 0
+        self.sy = 0
+        self.gcd = 0
+        self.tc = 0
+
+
+    # geo2xy:  Converts from geodesic coordinates to cartesian coordinates 
+    #          assuming flat earth
+    # PRECONDITION: 
+    #   latdeg_o,londeg_o: Ownship  position
+    #    ([deg],[deg])
+    #   latdeg_i,londeg_i: Traffic position
+    #    ([deg],[deg])
+    #
+    # POSTCONDITION: 
+    #   (sx,sy) is the relative position of the ownship wrt traffic [m,m]
+    #    gcd : Great circle distance [rad]
+    #    tc  : Initial true course [rad]
+    #
+    # OUTPUTS: sx,sy,gcd,tc
+    #
+    def geo2xy( latdeg_o, londeg_o, latdeg_i, londeg_i ) :
+        
+        lat_o
+        lon_o
+        lat_i
+        lon_i
+        e2 = Flat * (2 - Flat)
+
+        lat_o = deg2rad(latdeg_o)
+        lat_i = deg2rad(latdeg_i)
+        lon_o = deg2rad(londeg_o)
+        lon_i = deg2rad(londeg_i)
+
+        dlat = lat_o - lat_i
+        dlon = lon_o - lon_i
+        r32 = 1 - e2 * sq( sin(lat_i) )
+        R1 = WGS84 * (1 - e2) / sqrt_safe( r32 * r32 * r32 )
+        R2 = WGS84 / sqrt_safe( 1 - e2 * sq( sin( lat_i ) ) )
+
+        self.sy  = R1 * dlat
+        self.sx  = R2 * cos(lat_i) * dlon
+        self.gcd = gc_dist( lat_o, lon_o, lat_i, lon_i )
+        self.tc = true_course( lat_o, lon_o, lat_i, lon_i )
