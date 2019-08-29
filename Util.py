@@ -90,7 +90,7 @@ def deg2rad( x ) :
 
 # Degrees:Minutes to radians
 def degmin2rad( d, m ) :
-    return ( d + sign(d) * m / 60.0 ) * PI / 180.0
+    return ( d + np.sign(d) * m / 60.0 ) * PI / 180.0
 
 
 # Meters to nautical miles
