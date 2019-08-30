@@ -288,7 +288,7 @@ class KB3D :
                 self.vy = self.vy
             elif tau_pos( sx, sy, 0, -self.vy-viy ) :
                 self.vx = vix
-                self.vy = -self.vy;             
+                self.vy = -self.vy             
             else :
                 return
         elif discr(a,b,c) >= 0 :
@@ -347,7 +347,7 @@ class KB3D :
     def optimal_vx_vy( self, sx, sy, vox, voy, vix, viy, epsilon ) :
         self.ovx = 0 
         self.ovy = 0
-        vx  = vox-vix;    
+        vx  = vox-vix    
         vy  = voy-viy
         qpx = self.Q( sx, sy, epsilon )
         qpy = self.Q( sy, sx, -epsilon )
