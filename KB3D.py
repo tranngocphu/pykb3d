@@ -45,6 +45,9 @@
 #
 
 from Constants import *
+from Util import *
+from CD3D import *
+
 
 
 # Support functions 
@@ -159,9 +162,9 @@ class KB3D :
         epsilon = 1        
         if pz == 0 and sz == 0 :
             epsilon = break_symm( sx, sy, sz )
-        else if pz == 0 : 
+        elif pz == 0 : 
             epsilon = sign(sz)
-        else
+        else :
             epsilon = sign(pz)
         return epsilon
 
@@ -187,10 +190,10 @@ class KB3D :
         if t == 0 :
             return NaR # THIS CASE SHOULD NEVER HAPPEN
         return viz + ( eps * self.H - sz ) / t
-    }
+    
 
     def vertical_theta2( self, sx, sy, sz, vx, vy, viz ) : 
-        t = theta( sx, sy, vx, vy, 1 )
+        t = self.theta( sx, sy, vx, vy, 1 )
         if t == 0 :
             return NaR # THIS CASE SHOULD NEVER HAPPEN
         return viz + ( sign(sz) * self.H - sz ) / t
@@ -210,9 +213,9 @@ class KB3D :
         self.vy = voy - viy
         if sq(self.vx) + sq(self.vy) == 0 :
             self.vs = viz
-        else if epsilon*sz < self.H and sq(sx) + sq(sy) > sq(self.D) :
+        elif epsilon*sz < self.H and sq(sx) + sq(sy) > sq(self.D) :
             self.vs = self.vertical_theta1( sx, sy, sz, self.vx, self.vy, viz, epsilon )        
-        else if epsilon*sz >= self.H : 
+        elif epsilon*sz >= self.H : 
             self.vs =  self.vertical_theta2( sx, sy, sz, self.vx, self.vy, viz )        
         return self.vs
     
@@ -224,12 +227,12 @@ class KB3D :
         c = sq(self.D) * ( sq(vix) + sq(viy) ) - sq(sx*viy - sy*vix)
         if a == 0  and ( c*b >= 0 or not tau_pos( sx, sy, -c/b*vox - vix, -c/b*voy - viy ) ) : 
             k = 0
-        else if a == 0 :
+        elif a == 0 :
             k = -c/b
-        else if discr(a,b,c) >= 0 :
+        elif discr(a,b,c) >= 0 :
             k = root( a, b, c, epsilon ) 
-            if k <= 0 or not tau_pos( sx, sy, k*vox - vix, k*voy - viy ) )
-            k = 0        
+            if k <= 0 or not tau_pos( sx, sy, k*vox - vix, k*voy - viy ) :
+                k = 0        
         return k
 
     
@@ -248,7 +251,7 @@ class KB3D :
     '''
 
     def ground_speed( self, sx, sy, vox, voy, vix, viy, epsilon ) :
-        k = ground_speed_k( sx, sy, vox, voy, vix, viy, epsilon )
+        k = self.ground_speed_k( sx, sy, vox, voy, vix, viy, epsilon )
         self.kvx = 0 
         self.kvy = 0
         if k > 0 and eps_line( sx, sy, k*vox - vix, k*voy - viy ) == epsilon :
@@ -283,12 +286,12 @@ class KB3D :
             if tau_pos( sx, sy , 0, self.vy-viy ) :
                 self.vx = vix
                 self.vy = self.vy
-            else if tau_pos( sx, sy, 0, -self.vy-viy ) :
+            elif tau_pos( sx, sy, 0, -self.vy-viy ) :
                 self.vx = vix
                 self.vy = -self.vy;             
             else :
                 return
-        else if discr(a,b,c) >= 0 :
+        elif discr(a,b,c) >= 0 :
             vx1 = root( a, b, c, 1 )
             vy1 = ( viyx + syx*vx1 ) / sxy
             vx2 = root(a,b,c,-1)
@@ -298,7 +301,7 @@ class KB3D :
             if tp1 and ( not tp2 or vx1*vox+vy1*voy > vx2*vox+vy2*voy ) :
                 self.vx = vx1
                 self.vy = vy1 
-            else if tp2 :
+            elif tp2 :
                 self.vx = vx2
                 self.vy = vy2 
             else :
@@ -348,11 +351,11 @@ class KB3D :
         vy  = voy-viy
         qpx = self.Q( sx, sy, epsilon )
         qpy = self.Q( sy, sx, -epsilon )
-        tpq = self.contact_time( sx, sy, qpx, qpy, vx, vy )
+        tpq = contact_time( sx, sy, qpx, qpy, vx, vy )
         if tpq > 0 :
             self.ovx = (qpx-sx) / tpq + vix
             self.ovy = (qpy-sy) / tpq + viy
-        else if tpq == 0 :
+        elif tpq == 0 :
             self.ovx = -sy*(sx*vy-vx*sy) + vix
             self.ovy =  sx*(sx*vy-vx*sy) + viy
     
@@ -384,8 +387,7 @@ class KB3D :
         if ( self.ovx != 0 or self.ovy != 0 ) and eps_line( sx, sy, self.ovx-vix, self.ovy-viy ) == epsilon :
             self.opt_trk = atan2_safe( self.ovx, self.ovy )
             self.opt_gs  = sqrt( sq(self.ovx) + sq(self.ovy) )
-            return
-        }
+            return        
         self.ovx = 0 
         self.ovy = 0
     
@@ -407,7 +409,7 @@ class KB3D :
 
     def kb3d_vertical( self, sx, sy, sz, vox, voy, voz, vix, viy, viz) :
         self.vs = NaR
-        if precondition( sx, sy, sz, vox, voy, voz, vix, viy, viz ) :
+        if self.precondition( sx, sy, sz, vox, voy, voz, vix, viy, viz ) :
             pz = sz + self.cd3d.time2los*(voz-viz)
             self.vs = self.vertical( sx, sy, sz, vox, voy, voz, vix, viy, viz, self.vertical_coordination( sx, sy, sz, pz) )
     
@@ -478,4 +480,3 @@ class KB3D :
     def kb3d( self, sx, sy, sz, vox, voy, voz, vix, viy, viz) :
         self.kb3d_vertical( sx, sy, sz, vox, voy, voz, vix, viy, viz )
         self.kb3d_horizontal( sx, sy, sz, vox, voy, voz, vix, viy, viz )
-    }
