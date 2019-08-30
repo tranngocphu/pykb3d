@@ -38,7 +38,8 @@
  # The below Python implementation was done by Phu Tran @ ATMRI
  #
 
-
+import math
+from math import sin, cos, fabs, asin
 from Constants import *
 from Util import *
 from LoS import *
@@ -162,7 +163,7 @@ class CDR :
             
             else : # aircraft are in violation
                 self.recovery = -1
-                self.newvs = msec2ftmin( vertical_recovery( self.sx, self.sy, self.sz, self.voz, self.viz, self.h, self.fabs(cdnow.t_in) ) )
+                self.newvs = msec2ftmin( vertical_recovery( self.sx, self.sy, self.sz, self.voz, self.viz, self.h, fabs(cdnow.t_in) ) )
 
 
     def set_DHT( self, D, H, T ) :
