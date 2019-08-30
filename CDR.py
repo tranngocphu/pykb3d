@@ -39,25 +39,26 @@
  #
 
 
+from Constants import *
 from Util import *
+from LoS import *
+from Geodesic import *
 from CD3D import *
 from KB3D import *
-from Geodesic import *
-from Constants import *
-from LoS import *
+
 
 
 class CDR :
 
 
-    def __init__ (  self, D, H, T, x_o, y_o, alt_o, trk_o, gs_o, vs_o, x_i, y_i, alt_i, trk_i, gs_i, vs_i, gxy  ) :
+    def __init__ (  self, D, H, T, x_o, y_o, alt_o, trk_o, gs_o, vs_o, x_i, y_i, alt_i, trk_i, gs_i, vs_i, gxy ) :
 
         self.d = nm2m(D)        
         self.h = ft2m(H)
         self.t = T
 
-        self.cd = CD3D(d, t, h)
-        self.cr = KB3D(d, h, t)
+        self.cd = CD3D(self.d, self.t, self.h)
+        self.cr = KB3D(self.d, self.h, self.t)
 
         if gxy :
 
@@ -109,16 +110,16 @@ class CDR :
         
 
     def violation( self ) :
-        self.cd.set_D(d)
-        self.cd.set_H(h)
-        self.cd.set_T(t)
+        self.cd.set_D(self.d)
+        self.cd.set_H(self.h)
+        self.cd.set_T(self.t)
         return self.cd.violation( self.sx, self.sy, self.sz )
 
     
     def detection( self ) :
-        self.cd.set_D(d)
-        self.cd.set_H(h)
-        self.cd.set_T(t)
+        self.cd.set_D(self.d)
+        self.cd.set_H(self.h)
+        self.cd.set_T(self.t)
         self.cd.set_filter(self.filter)
         self.cd.cd3d(self.sx, self.sy, self.sz, self.vox - self.vix, self.voy - self.viy, self.voz - self.viz)
         self.time2los = self.cd.time2los
@@ -132,9 +133,9 @@ class CDR :
 
     def resolution( self ) :
         cdnow = CD3D( self.d, self.h, self.t )
-        self.cr.set_D(d)
-        self.cr.set_H(h)
-        self.cr.set_T(t)
+        self.cr.set_D(self.d)
+        self.cr.set_H(self.h)
+        self.cr.set_T(self.t)
         self.recovery = 0
 
         if cdnow.cd3d( self.sx, self.sy, self.sz, self.vox - self.vix, self.voy - self.viy, self.voz - self.viz ) :

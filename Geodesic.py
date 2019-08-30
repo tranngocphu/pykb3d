@@ -34,11 +34,12 @@
 # The below Python implementation was done by Phu Tran @ ATMRI
 #
 
-
+from math import sin, cos
 from Constants import Flat, WGS84
+from Util import *
 
 # Great cricle distance [rad]
-def dc_dist( lat1, lon1, lat2, lon2 ) :
+def gc_dist( lat1, lon1, lat2, lon2 ) :
     return 2 * asin_safe( sqrt_safe( sq( sin( (lat1-lat2) / 2.0 ) ) + cos(lat1)*cos(lat2)*sq( sin( (lon1-lon2) / 2.0  ) ) ) )
 
 
@@ -47,9 +48,9 @@ def true_course( lat1, lon1, lat2, lon2 ) :
     return atan2_safe( sin(lon2-lon1)*cos(lat2), cos(lat1)*sin(lat2) - sin(lat1)*cos(lat2) * cos(lon1-lon2) )
 
 
-class Geosedic : 
+class Geodesic : 
 
-    def __init__ () :
+    def __init__ ( self ) :
 
         self.sx = 0
         self.sy = 0
@@ -72,12 +73,12 @@ class Geosedic :
     #
     # OUTPUTS: sx,sy,gcd,tc
     #
-    def geo2xy( latdeg_o, londeg_o, latdeg_i, londeg_i ) :
+    def geo2xy( self, latdeg_o, londeg_o, latdeg_i, londeg_i ) :
         
-        lat_o
-        lon_o
-        lat_i
-        lon_i
+        # lat_o
+        # lon_o
+        # lat_i
+        # lon_i
         e2 = Flat * (2 - Flat)
 
         lat_o = deg2rad(latdeg_o)

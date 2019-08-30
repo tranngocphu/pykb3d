@@ -35,6 +35,11 @@
 
 
 import math
+from Constants import *
+from Util import *
+from LoS import *
+from Geodesic import *
+
 
 
 class CD3D :
@@ -132,17 +137,17 @@ class CD3D :
                     
                     self.t_in     = (  sign(sz)*self.H - sz ) / vz 
                     self.t_out    = ( -sign(sz)*self.H - sz ) / vz 
-                    time2lvs = t_in
+                    time2lvs = self.t_in
                 
                 else :
 
                     self.t_in = 0
-                    self.t_out = T
+                    self.t_out = self.T
 
         else :
             # vertical conflict in the future
             
-            d = 2 * sx * vx * sy * vy + sq(D) * ( sq(vx) + sq(vy) ) - ( sq(sx) * sq(vy) + sq(sy) * sq(vx) )
+            d = 2 * sx * vx * sy * vy + sq(self.D) * ( sq(vx) + sq(vy) ) - ( sq(sx) * sq(vy) + sq(sy) * sq(vx) )
 
             if d > 0 :
 
@@ -174,7 +179,7 @@ class CD3D :
                     self.t_out    = min(theta2, t2)
                     conflict = theta1 < t2 and t1 < theta2
 
-        self.time2los = max( t_in, 0 )            
+        self.time2los = max( self.t_in, 0 )            
         self.time2lhs = max( time2lhs, 0)
         self.time2lvs = max( time2lvs, 0)
         self.duration = self.t_out - self.time2los

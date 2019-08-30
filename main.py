@@ -31,7 +31,7 @@ if __name__ == "__main__":
     traffic: lon [deg] lat[deg] alt[feet] trk[deg] gs[knots] vs [ft/min]
                10,         0,     10000,    287,      316,      200)
     '''
-    cdr = CDR( D, H, T, 10, -0.383, 11500, 96, 253, -500,  10, 0, 10000, 287, 316, 200 )
+    cdr = CDR( D, H, T, 10, -0.383, 11500, 96, 253, -500,  10, 0, 10000, 287, 316, 200, True )
     
     print("Distance:", cdr.distance, "[nm]") 
     print("Course:", cdr.course, "[deg]")    
@@ -72,6 +72,6 @@ if __name__ == "__main__":
             print("Vertical Speed Only =", cdr.newvs, "[ft/min]")
     
     else :
-        print("No predicted conflict in ", T, " [sec] (filter: ", cdr.get_detection_filter(), "[sec])")
+        print("No predicted conflict in", T, "[sec] (filter:", cdr.get_detection_filter(), "[sec])")
     
     del cdr
