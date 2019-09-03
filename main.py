@@ -18,20 +18,13 @@ from CD3D import *
 from KB3D import *
 
 
-if __name__ == "__main__":
-  
-    D = 5    # 5 nautical miles
-    H = 1000 # 1000 ft
-    T = 300  # 5 minutes
-
-    # Create a CDR object
-    '''
-    ownship : lon [deg] lat[deg] alt[feet] trk[deg] gs[knots] vs [ft/min]
-               10,    -0.383,     11500,     96,      253,     -500,
-    traffic: lon [deg] lat[deg] alt[feet] trk[deg] gs[knots] vs [ft/min]
-               10,         0,     10000,    287,      316,      200)
-    '''
-    cdr = CDR( D, H, T, 10, -0.383, 11500, 96, 253, -500,  10, 0, 10000, 287, 316, 200, True )
+def run( D, H, T, ownship, traffic ) :
+    
+    # Create a CDR object        
+    cdr = CDR(  D, H, T, 
+                ownship[0], ownship[1], ownship[2], ownship[3], ownship[4], ownship[5],
+                traffic[0], traffic[1], traffic[2], traffic[3], traffic[4], traffic[5], 
+                True )
     
     print("Distance:", cdr.distance, "[nm]") 
     print("Course:", cdr.course, "[deg]")    
@@ -75,3 +68,30 @@ if __name__ == "__main__":
         print("No predicted conflict in", T, "[sec] (filter:", cdr.get_detection_filter(), "[sec])")
     
     del cdr
+
+
+
+if __name__ == "__main__": 
+    
+    D = 5    # 5 nautical miles
+    H = 1000 # 1000 ft
+    T = 300  # 5 minutes
+
+    # ownship : lon [deg] lat[deg] alt[feet] trk[deg] gs[knots] vs [ft/min]
+    # traffic : lon [deg] lat[deg] alt[feet] trk[deg] gs[knots] vs [ft/min]
+
+    examples = [
+        # {
+        #     "ownship" : [ 37+05.41/60, 76+20.11/60, 41000, -179.87, 200, 1], 
+        #     "traffic" : [ 36+50.28/60, 76+19.89/60, 41000,    0.27, 453, 3]
+        # },
+        {
+            "ownship": [ 10,    -0.383,     11500,     96,      253,     -500 ],
+            "traffic": [ 10,         0,     10000,    287,      316,      200 ]
+        }
+    ]
+
+    print("\n")
+
+    for case in examples :
+        run( D, H, T, case["ownship"], case["traffic"] )

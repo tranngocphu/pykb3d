@@ -129,15 +129,15 @@ class CD3D :
         if vx == 0 and vy == 0 and sq(vx) + sq(vy) < sq(self.D) :
             # There's no horizontal movement
             
-            conflict = sq(sz) < sq(self.H) or ( vz != 0 and vz*sz <= 0 and -self.H < sign(vz)*(self.T*vz + sz) )
+            self.conflict = sq(sz) < sq(self.H) or ( vz != 0 and vz*sz <= 0 and -self.H < sign(vz)*(self.T*vz + sz) )
 
-            if conflict :
+            if self.conflict :
                 
                 if vz != 0 :
                     
                     self.t_in     = (  sign(sz)*self.H - sz ) / vz 
                     self.t_out    = ( -sign(sz)*self.H - sz ) / vz 
-                    time2lvs = self.t_in
+                    self.time2lvs = self.t_in
                 
                 else :
 
@@ -155,7 +155,7 @@ class CD3D :
                 b = sx*vx + sy*vy
                 theta1 = ( -b - math.sqrt(d) ) / a # first intersection with D
                 theta2 = ( -b + math.sqrt(d) ) / a # second intersection with D
-                time2lhs = theta1
+                self.time2lhs = theta1
 
                 # theta1 <= theta2 
 
@@ -164,28 +164,26 @@ class CD3D :
                     # horizontal movement only
                     self.t_in  = theta1
                     self.t_out = theta2
-                    conflict = sq(sz) < sq(self.H)
+                    self.conflict = sq(sz) < sq(self.H)
 
                 else :
                     
                     # general case
                     t1 = ( -sign(vz)*self.H - sz ) / vz
                     t2 = (  sign(vz)*self.H - sz ) / vz
-                    time2lvs = t1
+                    self.time2lvs = t1
 
                     # t1 < t2
 
                     self.t_in     = max(theta1, t1)
                     self.t_out    = min(theta2, t2)
-                    conflict = theta1 < t2 and t1 < theta2
+                    self.conflict = theta1 < t2 and t1 < theta2
 
         self.time2los = max( self.t_in, 0 )            
-        self.time2lhs = max( time2lhs, 0)
-        self.time2lvs = max( time2lvs, 0)
+        self.time2lhs = max( self.time2lhs, 0)
+        self.time2lvs = max( self.time2lvs, 0)
         self.duration = self.t_out - self.time2los
         
-        conflict &= self.t_in <= self.T and self.t_out > 0 and self.duration > self.filter
-        
-        self.conflict = conflict
-        
-        return conflict
+        self.conflict &= self.t_in <= self.T and self.t_out > 0 and self.duration > self.filter
+              
+        return self.conflict
