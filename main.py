@@ -63,6 +63,16 @@ def run( D, H, T, ownship, traffic ) :
         
         if cdr.newvs != NaR :
             print("Vertical Speed Only =", cdr.newvs, "[ft/min]")
+
+
+
+        if cdr.gxy and cdr.cd.conflict :
+            cdr.loc_at_conflict()
+            print("Locations at loss in the format: [ lon[deg] lat[deg] alt[ft] ] ")
+            print("Ownship entry loss:", cdr.loc_at_entry_o )
+            print("Ownship exit loss:", cdr.loc_at_exit_o )
+            print("Intruder entry loss:", cdr.loc_at_entry_i )
+            print("Intruder exit loss:", cdr.loc_at_exit_i )
     
     else :
         print("No predicted conflict in", T, "[sec] (filter:", cdr.get_detection_filter(), "[sec])")
@@ -91,7 +101,6 @@ if __name__ == "__main__":
         }
     ]
 
-    print("\n")
-
     for case in examples :
+        print("\n")
         run( D, H, T, case["ownship"], case["traffic"] )

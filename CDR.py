@@ -38,9 +38,9 @@
  # The below Python implementation was done by Phu Tran @ ATMRI
  #
 
+from pygeodesy.ellipsoidalVincenty import LatLon 
 import math
 from math import sin, cos, fabs, asin
-from Constants import *
 from Util import *
 from LoS import *
 from Geodesic import *
@@ -59,7 +59,9 @@ class CDR :
         self.t = T
 
         self.cd = CD3D(self.d, self.t, self.h)
-        self.cr = KB3D(self.d, self.h, self.t)
+        self.cr = KB3D(self.d, self.h, self.t)      
+
+        
 
         if gxy :
 
@@ -71,7 +73,31 @@ class CDR :
             self.course = rad2deg(geo.tc) 
             del geo
 
+            # store absolute positions and speeds of the two aircraft, added by Phu
+            # ONLY for geodesic coordinates input
+            self.gxy = True
+            self.x_o = x_o
+            self.y_o = y_o
+            self.alt_o = alt_o
+            self.trk_o = to360(trk_o)
+            self.gs_o = gs_o
+            self.vs_o = vs_o
+            self.x_i = x_i
+            self.y_i = y_i
+            self.alt_i = alt_i
+            self.trk_i = to360(trk_i)
+            self.gs_i = gs_i
+            self.vs_i = vs_i
+
+            # locations of the aircraft at entry to and exit from loss of separation
+            self.loc_at_entry_o = False
+            self.loc_at_exit_o = False
+            self.loc_at_entry_i = False
+            self.loc_at_exit_i = False
+
         else :
+
+            self.gxy = False
 
             self.sx = nm2m( x_o - x_i )
             self.sy = nm2m( y_o - y_i )
@@ -190,3 +216,45 @@ class CDR :
 
     def get_detection_filter( self ) :
         return self.filter
+
+
+    '''
+    Calculate the locations of ownship and intruder at the entry
+        and the exit of the detected conflict 
+        function loc_at_conflict() 
+    '''
+    def loc_at_conflict( self ) :   
+
+        # ownship : lon [deg] lat[deg] alt[feet] trk[deg] gs[knots] vs [ft/min]
+        # traffic : lon [deg] lat[deg] alt[feet] trk[deg] gs[knots] vs [ft/min]
+         
+        if not self.cd.conflict :
+            # no conflict
+            return False
+
+        elif not self.gxy :
+            return False # This method only works with geodesic coordinates
+
+        else :            
+            entry_alt_o = round( self.alt_o + self.vs_o / 60 * self.t_in  ) # [ft]
+            exit_alt_o  = round( self.alt_o + self.vs_o / 60 * self.t_out ) # [ft]
+            entry_alt_i = round( self.alt_i + self.vs_i / 60 * self.t_in  ) # [ft]
+            exit_alt_i  = round( self.alt_i + self.vs_i / 60 * self.t_out ) # [ft]
+            
+            dist2entry_o = nm2m(self.gs_o) / 3600 * self.t_in # [m]      
+            dist2exit_o = nm2m(self.gs_o) / 3600 * self.t_out # [m]  
+            dist2entry_i = nm2m(self.gs_i) / 3600 * self.t_in # [m]           
+            dist2exit_i = nm2m(self.gs_i) / 3600 * self.t_out # [m]  
+
+            current_loc_o = LatLon(self.y_o, self.x_o)
+            current_loc_i = LatLon(self.y_o, self.x_i)
+
+            entry_o = current_loc_o.destination(dist2entry_o, self.trk_o)
+            exit_o = current_loc_o.destination(dist2exit_o, self.trk_o)
+            entry_i = current_loc_i.destination(dist2entry_i, self.trk_i)
+            exit_i = current_loc_i.destination(dist2exit_i, self.trk_i)
+
+            self.loc_at_entry_o = [ entry_o.lon, entry_o.lat, entry_alt_o ]
+            self.loc_at_exit_o  = [ exit_o.lon,  exit_o.lat,  exit_alt_o  ]
+            self.loc_at_entry_i = [ entry_i.lon, entry_i.lat, entry_alt_i ]
+            self.loc_at_exit_i  = [ exit_i.lon,  exit_i.lat,  exit_alt_i  ]
