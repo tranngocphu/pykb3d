@@ -58,7 +58,7 @@ class CDR :
         self.h = ft2m(H)
         self.t = T
 
-        self.cd = CD3D(self.d, self.t, self.h)
+        self.cd = CD3D(self.d, self.h, self.t)
         self.cr = KB3D(self.d, self.h, self.t)      
 
         
@@ -246,8 +246,8 @@ class CDR :
             dist2entry_i = nm2m(self.gs_i) / 3600 * self.t_in # [m]           
             dist2exit_i = nm2m(self.gs_i) / 3600 * self.t_out # [m]  
 
-            current_loc_o = LatLon(self.y_o, self.x_o)
-            current_loc_i = LatLon(self.y_o, self.x_i)
+            current_loc_o = LatLon(self.x_o, self.y_o)
+            current_loc_i = LatLon(self.x_o, self.y_i)
 
             entry_o = current_loc_o.destination(dist2entry_o, self.trk_o)
             exit_o = current_loc_o.destination(dist2exit_o, self.trk_o)
