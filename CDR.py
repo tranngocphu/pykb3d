@@ -241,10 +241,10 @@ class CDR :
             entry_alt_i = round( self.alt_i + self.vs_i / 60 * self.t_in  ) # [ft]
             exit_alt_i  = round( self.alt_i + self.vs_i / 60 * self.t_out ) # [ft]
             
-            dist2entry_o = nm2m(self.gs_o) / 3600 * self.t_in # [m]      
-            dist2exit_o = nm2m(self.gs_o) / 3600 * self.t_out # [m]  
-            dist2entry_i = nm2m(self.gs_i) / 3600 * self.t_in # [m]           
-            dist2exit_i = nm2m(self.gs_i) / 3600 * self.t_out # [m]  
+            dist2entry_o = knots2msec(self.gs_o) * self.time2los # [m]
+            dist2exit_o = knots2msec(self.gs_o) * self.t_out # [m]
+            dist2entry_i = knots2msec(self.gs_i) * self.t_in # [m]
+            dist2exit_i = knots2msec(self.gs_i)  * self.t_out # [m]
 
             current_loc_o = LatLon(self.x_o, self.y_o)
             current_loc_i = LatLon(self.x_o, self.y_i)
@@ -254,7 +254,7 @@ class CDR :
             entry_i = current_loc_i.destination(dist2entry_i, self.trk_i)
             exit_i = current_loc_i.destination(dist2exit_i, self.trk_i)
 
-            self.loc_at_entry_o = [ entry_o.lon, entry_o.lat, entry_alt_o ]
-            self.loc_at_exit_o  = [ exit_o.lon,  exit_o.lat,  exit_alt_o  ]
-            self.loc_at_entry_i = [ entry_i.lon, entry_i.lat, entry_alt_i ]
-            self.loc_at_exit_i  = [ exit_i.lon,  exit_i.lat,  exit_alt_i  ]
+            self.loc_at_entry_o = [ entry_o.lat, entry_o.lon, entry_alt_o ]
+            self.loc_at_exit_o  = [ exit_o.lat,  exit_o.lon,  exit_alt_o  ]
+            self.loc_at_entry_i = [ entry_i.lat, entry_i.lon, entry_alt_i ]
+            self.loc_at_exit_i  = [ exit_i.lat,  exit_i.lon,  exit_alt_i  ]

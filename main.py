@@ -23,7 +23,7 @@ def run( D, H, T, ownship, traffic ) :
     # Create a CDR object        
     cdr = CDR(  D, H, T, 
                 ownship[0], ownship[1], ownship[2], ownship[3], ownship[4], ownship[5],
-                traffic[0], traffic[1], traffic[2], traffic[3], traffic[4], traffic[5], 
+                traffic[0], traffic[1], traffic[2], traffic[3], traffic[4], traffic[5],
                 True )
     
     print("Distance:", cdr.distance, "[nm]") 
