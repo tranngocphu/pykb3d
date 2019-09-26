@@ -241,7 +241,7 @@ class CDR :
             entry_alt_i = round( self.alt_i + self.vs_i / 60 * self.t_in  ) # [ft]
             exit_alt_i  = round( self.alt_i + self.vs_i / 60 * self.t_out ) # [ft]
             
-            dist2entry_o = knots2msec(self.gs_o) * self.time2los # [m]
+            dist2entry_o = knots2msec(self.gs_o) * self.t_in # [m]
             dist2exit_o = knots2msec(self.gs_o) * self.t_out # [m]
             dist2entry_i = knots2msec(self.gs_i) * self.t_in # [m]
             dist2exit_i = knots2msec(self.gs_i)  * self.t_out # [m]
